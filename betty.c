@@ -1,30 +1,20 @@
+#include "main.h"
+
 /**
- * This function passes the Betty checks.
+ * main - Entry point
  *
- * @return 0 if successful, -1 otherwise
+ * Return: Always 0 (Success)
  */
-int writeBeautifulCode() 
+int main(void)
 {
-    int result = 0;
+        int i;
 
-    printf("// This is a beautiful code\n");
-    printf("int x = 10;\n");
-    printf("int y = 20;\n");
-    printf("int z = x + y;\n");
-    printf("printf(\"The result is %d\", z);\n");
+        for (i = 0; i < 10; i++)
+        {
+                _putchar(i + '0');
+        }
 
-    return result;
-}
+        _putchar('\n');
 
-int main() 
-{
-    int result = writeBeautifulCode();
-
-    if (result == 0) {
-        printf("The code passed the Betty checks.\n");
-    } else {
-        printf("The code failed the Betty checks.\n");
-    }
-
-    return 0;
+        return (0);
 }
