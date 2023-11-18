@@ -2,46 +2,52 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/wait.h>
 
-#define BUFFER_SIZE 1024
+#define MAX_CMD_LEN 128
+#define MAX_ARGS 10
 
-/*
- * function : Display a prompt and wait for the user to type a command.
- *
- * The prompt is displayed again each time a command has been executed.
- * The command lines are simple, no semicolons, no pipes, no redirections or any other advanced features.
- *
- * Return : If an executable cannot be found, print an error message and display the prompt again.
- */
- 
-int main(void)
+int main() 
 {
-	char *buffer;
-	size_t bufsize = BUFFER_SIZE;
-	ssize_t characters;
+	char cmd[MAX_CMD_LEN];
+	char *args[MAX_ARGS];
+	pid_t pid;
+	int status;
 
-	buffer = (char *)malloc(bufsize * sizeof(char));
-	if (!buffer)
-	{
-		perror("Unable to allocate buffer");
-		exit(1);
-	}
-
-	while (1)
+	while (1) 
 	{
 		printf("$ ");
-		characters = getline(&buffer, &bufsize, stdin);
-		if (characters == -1)
+		if (fgets(cmd, sizeof(cmd), stdin) == NULL) 
 		{
-            		break;
+			printf("\n");
+			exit(0);
 		}
-		if (strcmp(buffer, "exit\n") == 0)
+
+		if (cmd[strlen(cmd) - 1] == '\n') 
 		{
-			break;
+			cmd[strlen(cmd) - 1] = '\0';
 		}
-		printf("%s", buffer);
+
+		args[0] = cmd;
+		args[1] = NULL;
+
+		pid = fork();
+		if (pid < 0) 
+		{
+			perror("Fork failed");
+			exit(1);
+		}
+
+		if (pid == 0) 
+		{
+			execvp(args[0], args);
+			perror("Execution failed");
+			exit(1);
+		} 
+		else 
+		{
+			wait(&status);
+		}
 	}
-	free(buffer);
+
 	return 0;
 }
